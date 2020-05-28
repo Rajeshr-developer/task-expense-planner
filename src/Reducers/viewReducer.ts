@@ -18,6 +18,11 @@ const viewReducer = (state = initialState, action: CustomAction) => {
                 renderPrompt: action.payload,
                 promptType:'income'
             };
+        case 'ADD_INCOME':
+            return {
+                ...state,
+                renderPrompt: false
+            };
         case 'RENDER_PROMPT_SPENDING':
             return {
                 ...state,

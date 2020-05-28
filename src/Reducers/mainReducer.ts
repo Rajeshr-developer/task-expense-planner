@@ -30,7 +30,7 @@ const deleteTransaction = (_id: any) => {
     let trnsc = JSON.parse(localStorage.getItem('transactions') ?? '');
     trnsc.forEach((element: any, indx: any) => {
         let el = JSON.parse(element);
-        console.log('el = ',el);
+        console.log('el = ', el);
         if (el.id == String(_id)) {
             trnsc.splice(indx, 1);
             return;
@@ -46,9 +46,9 @@ const initialState = {
     localStorageData: {},
     renderPrompt: false,
     totalKeys: 0,
-    balance:localBalance(),
-    income:localIncome(),
-    spendings:localSpendings()
+    balance: localBalance(),
+    income: localIncome(),
+    spendings: localSpendings()
 };
 
 interface CustomAction extends Action {
@@ -59,18 +59,20 @@ const mainReducer = (state = initialState, action: CustomAction) => {
     switch (action.type) {
         case 'ADD_INCOME':
             localStorage.setItem('transactions', JSON.stringify([[action.payload], ...state.transactionData]));
+            var amt: any = JSON.parse(action.payload);
             return {
                 ...state,
                 transactionData: [action.payload, ...state.transactionData],
-                balance: state.balance + Number(action.payload.amount),
-                income: state.balance + Number(action.payload.amount)
+                balance: amt.type == "income" ? state.balance + Number(amt.amount) : state.balance - Number(amt.amount),
+                income: amt.type == "income" ? state.income + Number(amt.amount) : state.income,
+                spendings: amt.type == "spending" ? state.spendings + Number(amt.amount) : state.spendings,
+                renderPrompt: false
             };
         case 'DELETE_TRANSACTION':
+            var amt: any = JSON.parse(action.payload).amount;
             return {
                 ...state,
                 transactionData: deleteTransaction(action.payload),
-                balance: state.balance - Number(action.payload.amount),
-                spendings: state.balance + Number(action.payload.amount)
             };
         case 'ADD_EXPENSE':
             return {

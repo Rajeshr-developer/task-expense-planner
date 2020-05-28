@@ -46,8 +46,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => ({
             "remarks": _val,
             "time": String(formatted_date()),
             "id": String(Date.now()),
-            "type": promptType
-            , payload: false
+            "type": promptType,
         })
     }),
     closepopup: () => dispatch({ type: "RENDER_PROMPT", payload: false })
@@ -72,7 +71,11 @@ const PromptPopup = ({ renderPrompt, promptType, addIncome, closepopup }: any): 
                         if (e.target.value.length <= 30)
                             setState(e.target.value);
                     }} />
-                    <Button buttonName={'OK'} height={'8%'} width={'57%'} color={'green'} onClick={() => addIncome(val, amntVal, promptType)} />
+                    <Button buttonName={'OK'} height={'8%'} width={'57%'} color={'green'} onClick={() => {
+                        if(val!='' && amntVal!=''){
+                            addIncome(val, amntVal, promptType)
+                        }
+                    }} />
                     <Button buttonName={'CANCEL'} height={'8%'} width={'57%'} color={'green'} onClick={closepopup} />
                 </PromptLayer>
             </>

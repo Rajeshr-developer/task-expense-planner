@@ -21,6 +21,7 @@ const CustomButton = styled.button<IButtonProps>`
     background:${props => props.color ?? "grey"};
     width:${props => props.width ?? "100px"};
     height:${props => props.height ?? "100px"};
+    margin-top:7%;
 `
 
 export const Button: Function = (props: IButtonProps): JSX.Element => {

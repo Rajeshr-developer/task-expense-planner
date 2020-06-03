@@ -18,11 +18,11 @@ const RootContainer = () => {
 
     useEffect(() => {
         document.onreadystatechange = () => {
+            console.log(document.getElementsByClassName('Background')[0]);
             let clientHeight = document.getElementsByClassName('Background')[0].clientHeight;
             if (clientHeight != 0) {
                 setState(clientHeight)
             }
-            console.log(document.getElementsByClassName('Background')[0].clientHeight)
         }
 
     }, [])

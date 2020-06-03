@@ -1,8 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import styled from 'styled-components';
-import { connect } from 'react-redux';
 import { Button } from './button';
-import { Dispatch } from 'redux';
+import { MyContext } from '../contextProvider/myProvider';
+import { useEffect } from 'react';
+import { useLocalStorage } from '../customHook/useLocalStorage';
+
+const { Map } = require('immutable');
+
+let prmptType = 'income';
 
 const PromptLayer = styled.div`
     position:absolute;
@@ -27,35 +32,27 @@ const Title = styled.span`
     color:white;
 `
 
-const mapStateToProps = (state: any) => ({
-    renderPrompt: state.viewData.renderPrompt,
-    promptType: state.viewData.promptType
-});
+const PromptBox = () => {
 
-const formatted_date = () => {
-    var result = "";
-    var d = new Date();
-    result += d.getDate() + "." + (d.getMonth()) + "." + d.getFullYear();
-    return result;
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-    addIncome: (_val: string, _amntVal: number, promptType: string) => dispatch({
-        type: "ADD_INCOME", payload: JSON.stringify({
-            "amount": _amntVal,
-            "remarks": _val,
-            "time": String(formatted_date()),
-            "id": String(Date.now()),
-            "type": promptType,
-        })
-    }),
-    closepopup: () => dispatch({ type: "RENDER_PROMPT", payload: false })
-});
-
-const PromptPopup = ({ renderPrompt, promptType, addIncome, closepopup }: any): JSX.Element | null => {
-
-    const [val, setState] = useState('');
+    const [commentTxt, commentState] = useState('');
     const [amntVal, setAmountState] = useState('');
+    const [renderPrompt, setDisplayState] = useState(false);
+
+    const [val, setstate] = useContext(MyContext);
+
+    const emitEvent = (event: any) => {
+        prmptType = event.detail['prompttype'];
+        commentState('');
+        setAmountState('');
+        setDisplayState(true);
+    }
+
+    useEffect(() => {
+        window.addEventListener('showPrompt', emitEvent);
+        return () => {
+            window.removeEventListener('showPrompt', emitEvent);
+        };
+    }, [])
 
     return (
         renderPrompt ? (
@@ -67,20 +64,30 @@ const PromptPopup = ({ renderPrompt, promptType, addIncome, closepopup }: any): 
                             setAmountState(e.target.value);
                     }} />
                     <Title>{'Comments'}</Title>
-                    <CustomInput type="input" value={val} onChange={(e) => {
+                    <CustomInput type="input" value={commentTxt} onChange={(e) => {
                         if (e.target.value.length <= 30)
-                            setState(e.target.value);
+                            commentState(e.target.value);
                     }} />
                     <Button buttonName={'OK'} height={'8%'} width={'57%'} color={'green'} onClick={() => {
-                        if(val!='' && amntVal!=''){
-                            addIncome(val, amntVal, promptType)
+                        if (commentTxt != '' && amntVal != '') {
+                            const deep = Map({ 'amount': amntVal, "comments": commentTxt, "type": prmptType, "id": String(Date.now()) });
+                            let val = window.localStorage.getItem('transactions') ?? '';
+                            val += (val != '' ? '~' : '') + JSON.stringify(deep);
+                            useLocalStorage.setItem('transactions', val, setstate);
+                            setDisplayState(false);
                         }
                     }} />
-                    <Button buttonName={'CANCEL'} height={'8%'} width={'57%'} color={'green'} onClick={closepopup} />
+                    <Button buttonName={'CANCEL'} height={'8%'} width={'57%'} color={'red'} onClick={() => { setDisplayState(false) }} />
                 </PromptLayer>
             </>
         ) : null
     )
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(PromptPopup);
+const PromptPopup = (): JSX.Element | null => {
+    return (
+        <PromptBox />
+    )
+}
+
+export default PromptPopup;

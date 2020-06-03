@@ -1,8 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import deleteIcon from '../delete.png';
-import { Dispatch } from 'redux';
-import { connect } from 'react-redux';
 
 const DateEl = styled.span`
     height:3vh;
@@ -40,24 +38,21 @@ const Container = styled.div`
     height:29%;
 `
 
-const mapDispatchToProps = (dispatch: any) => ({
-    closepopup: (_id: any) => dispatch({ type: "DELETE_TRANSACTION", payload: _id })
-});
-
-const DashBoardContents = ({ data, closepopup }: any) => {
+const DashBoardContents = ({ data, deleteData }: any) => {
 
     const info = JSON.parse(data);
 
-    console.log('info = ', info);
-
     return (
-        <Container>
-            <DateEl>{info.time}</DateEl>
-            <Amount color={info.type == "income" ? 'green' : 'red'}>{info.amount}</Amount>
-            <Remarks>{info.remarks}</Remarks>
-            <Delete src={deleteIcon} id={info.id} onClick={(e: any) => { closepopup(e.target.id) }} />
-        </Container>
+        useMemo(() => (
+            <Container>
+                <DateEl>{info.time}</DateEl>
+                <Amount color={info.type == "income" ? 'green' : 'red'}>{info.amount}</Amount>
+                <Remarks>{info.comments}</Remarks>
+                <Delete src={deleteIcon} id={info.id} onClick={(e: any) => { deleteData(e.target.id) }} />
+            </Container>
+        ), [info.time, info.type, info.comments, info.id])
+
     )
 }
 
-export default connect(null, mapDispatchToProps)(DashBoardContents);
+export default DashBoardContents;

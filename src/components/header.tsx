@@ -1,6 +1,11 @@
-import React from 'react';
+import React, { useContext, useMemo } from 'react';
 import styled from 'styled-components';
-import { connect } from 'react-redux';
+import { MyContext } from '../contextProvider/myProvider';
+
+interface ICustomTextFieldProps {
+    fontSize?: string,
+    color?: string
+}
 
 const HeaderLayer = styled.div`
     display: flex;
@@ -11,45 +16,27 @@ const HeaderLayer = styled.div`
     border-bottom:red;
 `
 
-const BalanceText = styled.div`
+const CustomTextField = styled.span<ICustomTextFieldProps>`
     margin-left:10px;
-    font-size:0.5em
+    font-size:${props => props.fontSize ?? "0.6em"};
+    color:${props => props.color ?? "black"}
 `
 
-const Balance = styled.div`
-    margin-top:5px;
-    margin-left:10px;
-    font-size:0.9em
-`
+const Header = (): JSX.Element => {
 
-const Income = styled.span`
-    margin-left:10px;
-    color:green;
-    font-size:0.5em
-`
+    const [val] = useContext(MyContext);
 
-const Spendings = styled.span`
-    margin-left:10px;
-    color:red;
-    font-size:0.5em
-`
-
-const mapStateToProps = (state: any) => ({
-    balance: state.mainData.balance,
-    income: state.mainData.income,
-    spendings: state.mainData.spendings
-});
-
-const Header = ({ balance, income, spendings }: any): JSX.Element => {
-    console.log('transactionData = ', balance, income, spendings);
     return (
-        <HeaderLayer>
-            <BalanceText dangerouslySetInnerHTML={{ __html: 'Balance' }}></BalanceText>
-            <Balance dangerouslySetInnerHTML={{ __html: balance }}></Balance>
-            <Income>{"Income : " + String(income)}</Income>
-            <Spendings>{"Spendings : " + String(spendings)}</Spendings>
-        </HeaderLayer>
+        useMemo(() => (
+            <HeaderLayer>
+                <CustomTextField>{'Balance'}</CustomTextField>
+                <CustomTextField fontSize={"0.9em"}>{String(val.balance)}</CustomTextField>
+                <CustomTextField color={"green"}>{"Income : " + String(val.income)}</CustomTextField>
+                <CustomTextField color={"red"}>{"Spendings : " + String(val.spendings)}</CustomTextField>
+            </HeaderLayer>
+        ), [val.income, val.spendings])
+
     )
 }
 
-export default connect(mapStateToProps)(Header);
+export default Header;

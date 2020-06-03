@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import styled from 'styled-components';
 import DashBoardContents from './dashBoardContents';
-import { connect } from 'react-redux';
+import { MyContext } from '../contextProvider/myProvider';
+import { useLocalStorage } from '../customHook/useLocalStorage';
 
 const DashBoardBody = styled.div`
     height:60%;
@@ -9,17 +10,23 @@ const DashBoardBody = styled.div`
     overflow:scroll;
 `
 
-const mapStateToProps = (state: any) => ({
-    transactionData: state.mainData.transactionData
-});
+const DashBoard = (): JSX.Element => {
 
-const DashBoard = ({ transactionData }: any): JSX.Element => {
-    console.log('transactionData = ', transactionData);
+    const [val, setstate] = useContext(MyContext);
+
+    let transactionData = val.ls ? val.ls.split('~') : null;
+
+    const deleteInfo = (e: any) => {
+        if (!transactionData) return null;
+        transactionData = transactionData.filter((val: any) => { return JSON.parse(val).id !== e });
+        useLocalStorage.setItem('transactions', transactionData.join('~'), setstate);
+    }
+
     return (
         <DashBoardBody>
             {
                 transactionData && transactionData.map((val: any, indx: number) => {
-                    return <DashBoardContents key={'#' + indx} data={val} />
+                    return <DashBoardContents key={'#' + indx} data={JSON.parse(JSON.stringify(val))} deleteData={deleteInfo} />
                 })
             }
 
@@ -27,4 +34,4 @@ const DashBoard = ({ transactionData }: any): JSX.Element => {
     )
 }
 
-export default connect(mapStateToProps)(DashBoard);
+export default DashBoard;

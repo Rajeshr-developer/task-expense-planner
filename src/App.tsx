@@ -2,10 +2,8 @@ import React from 'react';
 import iphone from './iphone.png';
 import styled from 'styled-components';
 import RootContainer from './RootContainer';
-import { Provider } from 'react-redux';
-import store from './Reducers/globalStore';
 
-const BgContainer = styled.div`
+const AppBg = styled.div`
   height:100vh;
   display:flex;
   align-items:center;
@@ -18,12 +16,10 @@ const Background = styled.img`
 
 function App() {
   return (
-    <Provider store={store}>
-      <BgContainer>
-        <Background className={'Background'} src={iphone} />
-        <RootContainer/>
-      </BgContainer>
-    </Provider>
+    <AppBg>
+      <Background className={'Background'} src={iphone} />
+      <RootContainer/>
+    </AppBg>
   );
 }
 

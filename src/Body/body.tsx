@@ -4,18 +4,19 @@ import DashBoard from '../dashBoard/';
 import Footer from '../footer';
 import { DeviceHeader } from '../components/deviceHeader';
 import PromptPopup from '../components/promptPopup';
-import AlertPopup from '../components/alertPopup';
+import { MyProvider } from '../contextProvider/myProvider';
 
 const BodyContents = () => {
 
     return (
         <>
-            <AlertPopup />
-            <PromptPopup />
             <DeviceHeader />
-            <Header />
-            <DashBoard />
-            <Footer />
+            <MyProvider>
+                <PromptPopup />
+                <Header />
+                <DashBoard />
+                <Footer />
+            </MyProvider>
         </>
     )
 }

@@ -34,7 +34,7 @@ const Header = (): JSX.Element => {
                 <CustomTextField color={"green"}>{"Income : " + String(val.income)}</CustomTextField>
                 <CustomTextField color={"red"}>{"Spendings : " + String(val.spendings)}</CustomTextField>
             </HeaderLayer>
-        ), [val.income, val.spendings])
+        ), [val.income, val.spendings, val.balance])
 
     )
 }

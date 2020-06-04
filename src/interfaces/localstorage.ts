@@ -7,7 +7,7 @@ export interface ILocalStorage {
 }
 
 export const _localStorageData: ILocalStorage = {
-    ls: window.localStorage.getItem('transactions') ?? '',
+    ls: window.localStorage.getItem('transactions') ?? null,
     balance: window.localStorage.getItem('balance') ?? '0',
     income: window.localStorage.getItem('income') ?? '0',
     spendings: window.localStorage.getItem('spendings') ?? '0',

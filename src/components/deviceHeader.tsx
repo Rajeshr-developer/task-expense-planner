@@ -27,7 +27,7 @@ const Battery = styled.img`
 `
 
 const returnDate = (): string => {
-    var date = new Date;
+    var date = new Date();
 
     var minutes = date.getMinutes() > 9 ? date.getMinutes() : "0" + date.getMinutes();
     var hour = date.getHours() > 9 ? date.getHours() : "0" + date.getHours();

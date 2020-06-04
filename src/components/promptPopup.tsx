@@ -69,10 +69,14 @@ const PromptBox = () => {
                             commentState(e.target.value);
                     }} />
                     <Button buttonName={'OK'} height={'8%'} width={'57%'} color={'green'} onClick={() => {
-                        if (commentTxt != '' && amntVal != '') {
+                        if (commentTxt !== '' && amntVal !== '') {
                             const deep = Map({ 'amount': amntVal, "comments": commentTxt, "type": prmptType, "id": String(Date.now()) });
-                            let val = window.localStorage.getItem('transactions') ?? '';
-                            val += (val != '' ? '~' : '') + JSON.stringify(deep);
+                            let val = useLocalStorage.getItem();
+                            if (val) {
+                                val += '~' + JSON.stringify(deep);
+                            } else {
+                                val = JSON.stringify(deep);
+                            }
                             useLocalStorage.setItem('transactions', val, setstate);
                             setDisplayState(false);
                         }

@@ -14,13 +14,19 @@ const DashBoard = (): JSX.Element => {
 
     const [val, setstate] = useContext(MyContext);
 
-    let transactionData = val.ls ? val.ls.split('~') : null;
+    console.log('val = ', val);
+
+    let transactionData: any;
+    if (val.ls !== 'null' && val.ls) { transactionData = val.ls.split('~') } else transactionData = null;
 
     const deleteInfo = (e: any) => {
         if (!transactionData) return null;
         transactionData = transactionData.filter((val: any) => { return JSON.parse(val).id !== e });
-        useLocalStorage.setItem('transactions', transactionData.join('~'), setstate);
+        transactionData.length < 1 ? transactionData = null : (transactionData = transactionData);
+        useLocalStorage.setItem('transactions', !transactionData ? null : transactionData.join('~'), setstate);
     }
+
+    console.log('transactionData = ', transactionData);
 
     return (
         <DashBoardBody>
